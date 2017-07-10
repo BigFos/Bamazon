@@ -5,7 +5,7 @@ var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "63BigFos88",
+    password: "RogerRabbit",
     database: "bamazon"
 });
 connection.connect(function(err) {
@@ -24,6 +24,7 @@ function queryAllProducts() {
         purchase();
     });
 }
+
 function purchase() {
     inquirer
         .prompt([{
@@ -48,23 +49,22 @@ function purchase() {
             }
         }])
         .then(function(answer) {
-        	var item = " '" + answer.item + "'";
+            var item = " '" + answer.item + "'";
             var query = "SELECT ?? FROM products WHERE item_id = ?";
             connection.query(query, ["*", answer.id], function(err, res) {
-                    
-                    let total = parseFloat(res[0].price) * parseInt(answer.quantity);
-                    let stock = parseInt(res[0].stock_quanity) - parseInt(answer.quantity)
-                    let update = "UPDATE products SET stock_quanity = ? WHERE item_id = ?"
 
-                    if (parseInt(res[0].stock_quanity) >= parseInt(answer.quantity)) {
-                    	connection.query(update, [stock, answer.id], function(err, res) {
-	    				console.log("\nYour total purchase amount is: $" + total + "\n \n \n \n \n");
-    });
-                    }
-                    else{
-                    	console.log("\nInsufficient stock!\n \n \n \n \n")
-                    }
-                  
+                let total = parseFloat(res[0].price) * parseInt(answer.quantity);
+                let stock = parseInt(res[0].stock_quanity) - parseInt(answer.quantity)
+                let update = "UPDATE products SET stock_quanity = ? WHERE item_id = ?"
+
+                if (parseInt(res[0].stock_quanity) >= parseInt(answer.quantity)) {
+                    connection.query(update, [stock, answer.id], function(err, res) {
+                        console.log("\nYour total purchase amount is: $" + total + "\n \n \n \n \n");
+                    });
+                } else {
+                    console.log("\nInsufficient stock!\n \n \n \n \n")
+                }
+
                 queryAllProducts();
             });
         });
